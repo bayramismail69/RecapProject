@@ -9,6 +9,7 @@ using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 
 namespace Business.Concrete
 {
@@ -42,8 +43,8 @@ namespace Business.Concrete
             }
             return new ErrorDataResult<List<CarImage>>(Messages.PhotosOfTheCarNotFound);
         }
-        [SecuredOperation("product.add,admin")]
-        [ValidationAspect(typeof(CarImageValidator))]
+        //[SecuredOperation("product.add,admin")]
+        //[ValidationAspect(typeof(CarImageValidator))]
         public IResult Add(CarImage carImage)
         {
             IResult result = BusinessRules.Run(CarControl(carImage.CarId));
@@ -52,7 +53,7 @@ namespace Business.Concrete
             {
                 return result;
             }
-
+            carImage.Date = DateTime.Now;
             _carImageDal.Add(carImage);
 
             return new SuccessResult(Messages.CarImageAdded);
@@ -93,9 +94,9 @@ namespace Business.Concrete
             var result = _carService.GetById(carId);
             if (result.Success)
             {
-                return new ErrorResult(Messages.CarNotFound);
+                return new SuccessResult();
             }
-            return new SuccessResult();
+            return new ErrorResult(Messages.CarNotFound);
         }
         private IResult CarImageIdCheck(int carImageId)
         {

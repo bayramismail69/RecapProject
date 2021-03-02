@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Core.Utilities.Helpers.FilesHelper;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 
@@ -26,7 +27,13 @@ namespace Business.DependencyResolvers.Autofac
 
             builder.RegisterType<AuthManager>().As<IAuthService>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
+            builder.RegisterType<CarManager>().As<ICarService>();
+            builder.RegisterType<EfCarDal>().As<ICarDal>();
 
+            builder.RegisterType<CarImageManager>().As<ICarImageService>();
+            builder.RegisterType<EfCarImageDal>().As<ICarImageDal>();
+
+            builder.RegisterType<FileHelper>().As<IFileHelper>();
             builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();

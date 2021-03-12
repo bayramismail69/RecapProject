@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Utilities.Results;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace Business.Abstract
 {
    public interface ICarService
     {
         IDataResult<List<Car>> GetAll();
+        IDataResult<List<CarListDetailsDto>> CarListDetails();
         IDataResult<Car> GetById(int carId);
         IResult Add(Car car);
         IResult Update(Car car);

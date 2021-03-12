@@ -12,6 +12,7 @@ using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace Business.Concrete
 {
@@ -32,6 +33,16 @@ namespace Business.Concrete
                 return new SuccessDataResult<List<Car>>(results);
             }
             return new ErrorDataResult<List<Car>>(Messages.ThereAreNoCarsRegisteredInTheSystem);
+        }
+
+        public IDataResult<List<CarListDetailsDto>> CarListDetails()
+        {
+            var results = _carDal.CarListDetailsDtos();
+            if (results.Data==null)
+            {
+                return new ErrorDataResult<List<CarListDetailsDto>>(Messages.CarNotFound);
+            }
+            return new SuccessDataResult<List<CarListDetailsDto>>(results.Data);
         }
 
         public IDataResult<Car> GetById(int carId)

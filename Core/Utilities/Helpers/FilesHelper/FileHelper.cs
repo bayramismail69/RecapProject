@@ -23,7 +23,7 @@ namespace Core.Utilities.Helpers.FilesHelper
                     var files = Path.Combine(path + replaceFileName);
                     using (var fileStream = new FileStream(files, FileMode.Create))
                     {
-                        file.CopyTo(fileStream);
+                        file.CopyToAsync(fileStream);
                     }
                     return new SuccessDataResult<string>(replaceFileName);
                 }

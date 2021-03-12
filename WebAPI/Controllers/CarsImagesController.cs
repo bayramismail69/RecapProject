@@ -25,13 +25,15 @@ namespace WebAPI.Controllers
             _carImageService = carImageService;
         }
 
-        [HttpPost("all")]
-        public IActionResult All([FromForm] IFormFile file)
-        {
-            var path = _environment.WebRootPath + "/Images/";
-            var result = _file.Upload(file, path, "Image");
-            return Ok(result);
-        }
+        public IFormFile FromFile { get; private set; }
+
+        //[HttpPost("all")]
+        //public IActionResult All([FromForm] IFormFile file)
+        //{
+        //    var path = _environment.WebRootPath + "/Images/";
+        //    var result = _file.Upload(file, path, "Image");
+        //    return Ok(result);
+        //}
         [HttpPost("postall")]
         public IActionResult PostAll([FromForm] IFormFile file,[FromForm] CarImage carImage)
         {

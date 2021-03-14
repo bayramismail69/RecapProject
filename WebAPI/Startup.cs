@@ -17,6 +17,8 @@ using Core.Utilities.Security.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using Core.DependencyResolvers;
+using Core.Extensions;
 
 namespace WebAPI
 {
@@ -40,7 +42,7 @@ namespace WebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "v1" });
             });
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
@@ -59,6 +61,11 @@ namespace WebAPI
                     };
                 });
             ServiceTool.Create(services);
+
+            services.AddDependencyResolvers(new ICoreModule[]
+            {
+                new CoreModule(),
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

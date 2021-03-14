@@ -7,6 +7,7 @@ using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -24,7 +25,7 @@ namespace Business.Concrete
         {
             _carDal = carDal;
         }
-
+        [CacheAspect]
         public IDataResult<List<Car>> GetAll()
         {
             var results = _carDal.GetAll();
@@ -34,7 +35,7 @@ namespace Business.Concrete
             }
             return new ErrorDataResult<List<Car>>(Messages.ThereAreNoCarsRegisteredInTheSystem);
         }
-
+        [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> CarListDetails()
         {
             var results = _carDal.CarListDetailsDtos();
@@ -43,6 +44,17 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<CarListDetailsDto>>(Messages.CarNotFound);
             }
             return new SuccessDataResult<List<CarListDetailsDto>>(results.Data);
+        }
+
+        [CacheAspect]
+        public IDataResult<List<CarListDetailsDto>> CarListColorIdDetails(int colorId)
+        {
+            var results = _carDal.CarListColorIdDetailsDtos(colorId);
+            if (results.Count==0)
+            {
+                return  new ErrorDataResult<List<CarListDetailsDto>>(Messages.CarNotFound);
+            }
+            return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }
 
         public IDataResult<Car> GetById(int carId)

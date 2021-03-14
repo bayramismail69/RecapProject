@@ -34,7 +34,11 @@ namespace Business.Constants
         public static string CarImageUpdated = "Arabanın fotoğrafı Güncellendi";
         public static string CarImageNotFound = "Fotoğraf bulunamadı ";
         public static string CarImageDeleted = "Arabanın fotoğrafı Silindi";
+
         public static string RentalNotFound = "Kirada araç bulunamadı";
+
+        public static string ColorNotFound = "Sisteme kayıtlı renk bulunamadı";
+        public static string CustomerNotFound = "Müsteri Bulunamadı";
     }
 }
 

@@ -13,5 +13,6 @@ namespace DataAccess.Abstract
     public interface ICarDal : IEntityRepository<Car>
     {
        IDataResult<List<CarListDetailsDto>> CarListDetailsDtos();
+     List<CarListDetailsDto> CarListColorIdDetailsDtos(int colorId);
     }
 }

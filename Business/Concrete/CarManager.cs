@@ -56,6 +56,26 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }
+        [CacheAspect]
+        public IDataResult<List<CarListDetailsDto>> CarListBrandIdDetails(int brandId)
+        {
+            var results = _carDal.CarListBarndIdDetailsDtos(brandId);
+            if (results.Count == 0)
+            {
+                return new ErrorDataResult<List<CarListDetailsDto>>(Messages.CarNotFound);
+            }
+            return new SuccessDataResult<List<CarListDetailsDto>>(results);
+        }
+
+        public IDataResult<List<CarListDetailsDto>> CarListColorIdBrandIdDetails(int colorId, int brandId)
+        {
+            var results = _carDal.CarListColorIdBrandIdDetailsDtos(colorId, brandId);
+            if (results.Count==0)
+            {
+                return  new ErrorDataResult<List<CarListDetailsDto>>();
+            }
+            return new SuccessDataResult<List<CarListDetailsDto>>(results);
+        }
 
         public IDataResult<Car> GetById(int carId)
         {
@@ -137,6 +157,12 @@ namespace Business.Concrete
             }
 
             return new SuccessResult();
+        }
+
+        public IDataResult<CarImage> GetCarImagePathById(int carId)
+        {
+            var result = _carDal.CarImagePathCarId(carId);
+            return new SuccessDataResult<CarImage>(result);
         }
     }
 }

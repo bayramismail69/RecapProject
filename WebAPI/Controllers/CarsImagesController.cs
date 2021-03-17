@@ -27,6 +27,12 @@ namespace WebAPI.Controllers
 
         public IFormFile FromFile { get; private set; }
 
+        [HttpGet("gel")]
+        public IActionResult Gel()
+        {
+            var results = _carImageService.GetAll();
+            return Ok(results);
+        }
         //[HttpPost("all")]
         //public IActionResult All([FromForm] IFormFile file)
         //{

@@ -9,6 +9,7 @@ using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace Business.Concrete
@@ -17,21 +18,28 @@ namespace Business.Concrete
     {
         private ICarImageDal _carImageDal;
         private ICarService _carService;
-
+        List<CarListDetailsDto> carlistDtos = new List<CarListDetailsDto>();
+        CarListDetailsDto carListDetailsDto = new CarListDetailsDto();
         public CarImageManager(ICarImageDal carImageDal, ICarService carService)
         {
             _carImageDal = carImageDal;
             _carService = carService;
         }
 
-        public IDataResult<List<CarImage>> GetAll()
+        public IDataResult<List<CarImageDto>> GetAll()
         {
-            var results = _carImageDal.GetAll();
+            List<CarImageDto> carImageDtos = new List<CarImageDto>();
+            foreach(var item in _carImageDal.GetAll())
+            {
+                CarImageDto carImageDto = new CarImageDto {ImagePath=item.ImagePath };
+                carImageDtos.Add(carImageDto);
+            }
+            var results = carImageDtos;
             if (results.Count != 0)
             {
-                return new SuccessDataResult<List<CarImage>>(results);
+                return new SuccessDataResult<List<CarImageDto>>(results);
             }
-            return new ErrorDataResult<List<CarImage>>(Messages.CarPhotosNotFound);
+            return new ErrorDataResult<List<CarImageDto>>(Messages.CarPhotosNotFound);
         }
 
         public IDataResult<List<CarImage>> GetById(int carImageId)
@@ -115,6 +123,43 @@ namespace Business.Concrete
                 return new ErrorDataResult<CarImage>(Messages.CarImageNotFound);
             }
             return new SuccessDataResult<CarImage>();
+        }
+
+        public IDataResult<List<CarImage>> GetByCarId(int carId)
+        {
+            var results = _carImageDal.GetAll(p=>p.CarId==carId);
+            if (results.Count==0)
+            {
+                return new ErrorDataResult<List<CarImage>>(Messages.CarImageNotFound);
+            }
+            return new SuccessDataResult<List<CarImage>>(results);
+        }
+        public IDataResult<List<CarListDetailsDto>> GetCarDtoIamgeList()
+        {
+            carlistDtos.Clear();
+               var results = _carService.CarListDetails();
+            foreach (var item in results.Data)
+            {
+                carListDetailsDto = item;
+                var resultImage =_carImageDal.GetAll(p=>p.CarId== item.CarId);
+                if (resultImage.Count!=0)
+                {
+                    foreach (var item2 in resultImage)
+                    {
+                        carListDetailsDto.ImagePath = item2.ImagePath;
+                        break;
+                    }
+                }
+                else
+                {
+
+                    carListDetailsDto.ImagePath = "/Images/default.png";
+
+
+                }
+                carlistDtos.Add(carListDetailsDto);
+            }
+            return new SuccessDataResult<List<CarListDetailsDto>>(carlistDtos);
         }
     }
 }

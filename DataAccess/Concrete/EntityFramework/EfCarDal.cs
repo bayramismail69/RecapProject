@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Core.DataAccess.EntityFramework;
@@ -13,117 +14,26 @@ namespace DataAccess.Concrete.EntityFramework
 {
    public class EfCarDal:EfEntityRepositoryBase<Car,RecapContext>,ICarDal
     {
-        public IDataResult<List<CarListDetailsDto>> CarListDetailsDtos()
+        public List<CarListDetailsDto> CarListDetailsDtos(Expression<Func<Car, bool>> filter = null)
         {
             using (RecapContext recapContext=new RecapContext())
             {
-            
-                var results = from car in recapContext.Cars
-                    join brand in recapContext.Brands on car.BrandId equals brand.Id
-                    join color in recapContext.Colors on car.ColorId equals color.Id
+                IQueryable<CarListDetailsDto> carDetailsDtos = from car in filter is null ? recapContext.Cars : recapContext.Cars.Where(filter)
+                    join brand in recapContext.Brands
+                        on car.BrandId equals brand.Id
+                    join color in recapContext.Colors
+                        on car.ColorId equals color.Id
                     select new CarListDetailsDto
                     {
                         CarId = car.Id,
                         CarName = car.CarName,
                         BrandName = brand.BrandName,
-                        ColorName = color.ColorName
+                        ColorName = color.ColorName,
                     };
-                return new SuccessDataResult<List<CarListDetailsDto>>(results.ToList());
+                return carDetailsDtos.ToList();
             }
            
         }
-
-        public List<CarListDetailsDto> CarListColorIdDetailsDtos(int colorId)
-        {
-            using (RecapContext recapContext = new RecapContext())
-            {
-                var results = from car in recapContext.Cars
-                    join brand in recapContext.Brands on car.BrandId equals brand.Id
-                    join color in recapContext.Colors on car.ColorId equals color.Id
-                    where car.ColorId==colorId
-                    select new CarListDetailsDto
-                    {
-                        CarId = car.Id,
-                        CarName = car.CarName,
-                        BrandName = brand.BrandName,
-                        ColorName = color.ColorName
-                    };
-                return results.ToList();
-            }
-        }
-
-        public List<CarListDetailsDto> CarListBarndIdDetailsDtos(int brandId)
-        {
-
-            using (RecapContext recapContext = new RecapContext())
-            {
-                var results = from car in recapContext.Cars
-                              join brand in recapContext.Brands on car.BrandId equals brand.Id
-                              join color in recapContext.Colors on car.ColorId equals color.Id
-                              where car.BrandId == brandId
-                              select new CarListDetailsDto
-                              {
-                                  CarId = car.Id,
-                                  CarName = car.CarName,
-                                  BrandName = brand.BrandName,
-                                  ColorName = color.ColorName
-
-                              };
-              
-                return results.ToList();
-            }
-        }
-
-        public List<CarListDetailsDto> CarListColorIdBrandIdDetailsDtos(int colorId, int brandId)
-        {
-            using (RecapContext recapContext = new RecapContext())
-            {
-                if (brandId!=0)
-                {
-                    var results = from car in recapContext.Cars
-                        join brand in recapContext.Brands on car.BrandId equals brand.Id
-                        join color in recapContext.Colors on car.ColorId equals color.Id
-                        where car.ColorId == colorId && car.BrandId==brandId
-                        select new CarListDetailsDto
-                        {
-                            CarId = car.Id,
-                            CarName = car.CarName,
-                            BrandName = brand.BrandName,
-                            ColorName = color.ColorName
-                        }; 
-                    return results.ToList();
-                }
-                else
-                {
-                    var results = from car in recapContext.Cars
-                        join brand in recapContext.Brands on car.BrandId equals brand.Id
-                        join color in recapContext.Colors on car.ColorId equals color.Id
-                        where car.ColorId == colorId || car.BrandId == brandId
-                        select new CarListDetailsDto
-                        {
-                            CarId = car.Id,
-                            CarName = car.CarName,
-                            BrandName = brand.BrandName,
-                            ColorName = color.ColorName
-                        };
-                    return results.ToList();
-                }
-            }
-        }
-
-        public CarImage CarImagePathCarId(int carId)
-        {
-            CarImage carImage = new CarImage();
-            using (RecapContext context=new RecapContext())
-            {
-                var result = from v in context.CarImages where v.CarId == carId select v;
-                foreach (var item in result)
-                {
-                    carImage = item;
-                    break;
-                } 
-                return carImage;
-            }
-        }
+        
     }
 }

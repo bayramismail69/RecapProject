@@ -27,7 +27,8 @@ namespace WebAPI.Controllers
         [HttpGet("getalldetail")]
         public IActionResult GetAllDetail()
         {
-            var results = _carImageService.GetCarDtoIamgeList();
+            var carList = _carService.CarListDetails();
+            var results = _carImageService.GetCarDtoIamgeList(carList.Data);
             if (results.Success)
             {
                 return Ok(results);
@@ -38,7 +39,9 @@ namespace WebAPI.Controllers
         [HttpGet("getbycoloriddetail")]
         public IActionResult GetByColorIdDetail(int colorId)
         {
-            var results = _carService.CarListColorIdDetails(colorId);
+            var carList = _carService.CarListColorIdDetails(colorId);
+            var results = _carImageService.GetCarDtoIamgeList(carList.Data);
+           
             if (results.Success)
             {
                 return Ok(results);
@@ -49,7 +52,8 @@ namespace WebAPI.Controllers
         [HttpGet("getbybrandiddetail")]
         public IActionResult GetByBarndIdDetail(int brandId)
         {
-            var results = _carService.CarListBrandIdDetails(brandId);
+            var carList = _carService.CarListBrandIdDetails(brandId);
+            var results = _carImageService.GetCarDtoIamgeList(carList.Data);
             if (results.Success)
             {
                 return Ok(results);
@@ -60,7 +64,8 @@ namespace WebAPI.Controllers
         [HttpGet("getByColoridBrandidDetail")]
         public IActionResult GetByColorIdBrandIdDetail(int colorId, int brandId)
         {
-            var results = _carService.CarListColorIdBrandIdDetails(colorId, brandId);
+            var carList = _carService.CarListColorIdBrandIdDetails(colorId, brandId);
+            var results = _carImageService.GetCarDtoIamgeList(carList.Data);
             return Ok(results);
         }
         [HttpGet("getCarImagePatById")]

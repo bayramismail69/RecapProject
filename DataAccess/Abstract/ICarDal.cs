@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Core.DataAccess;
@@ -12,10 +13,7 @@ namespace DataAccess.Abstract
 {
     public interface ICarDal : IEntityRepository<Car>
     {
-      IDataResult<List<CarListDetailsDto>> CarListDetailsDtos();
-      List<CarListDetailsDto> CarListColorIdDetailsDtos(int colorId);
-        List<CarListDetailsDto> CarListBarndIdDetailsDtos(int brandId);
-       CarImage CarImagePathCarId(int carId);
-        List<CarListDetailsDto> CarListColorIdBrandIdDetailsDtos(int colorId, int brandId);
+      List<CarListDetailsDto> CarListDetailsDtos(Expression<Func<Car, bool>> filter = null);
+     
     }
 }

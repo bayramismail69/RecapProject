@@ -134,30 +134,33 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<CarImage>>(results);
         }
-        public IDataResult<List<CarListDetailsDto>> GetCarDtoIamgeList()
+        public IDataResult<List<CarListDetailsDto>> GetCarDtoIamgeList(List<CarListDetailsDto> carListDetailsDtos)
         {
             carlistDtos.Clear();
-               var results = _carService.CarListDetails();
-            foreach (var item in results.Data)
+
+            if (carListDetailsDtos.Count!=0)
             {
-                carListDetailsDto = item;
-                var resultImage =_carImageDal.GetAll(p=>p.CarId== item.CarId);
-                if (resultImage.Count!=0)
+                foreach (var item in carListDetailsDtos)
                 {
-                    foreach (var item2 in resultImage)
+                    carListDetailsDto = item;
+                    var resultImage =_carImageDal.GetAll(p=>p.CarId== item.CarId);
+                    if (resultImage.Count!=0)
                     {
-                        carListDetailsDto.ImagePath = item2.ImagePath;
-                        break;
+                        foreach (var item2 in resultImage)
+                        {
+                            carListDetailsDto.ImagePath = item2.ImagePath;
+                            break;
+                        }
                     }
+                    else
+                    {
+
+                        carListDetailsDto.ImagePath = "/Images/default.png";
+
+
+                    }
+                    carlistDtos.Add(carListDetailsDto);
                 }
-                else
-                {
-
-                    carListDetailsDto.ImagePath = "/Images/default.png";
-
-
-                }
-                carlistDtos.Add(carListDetailsDto);
             }
             return new SuccessDataResult<List<CarListDetailsDto>>(carlistDtos);
         }

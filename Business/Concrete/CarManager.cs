@@ -39,40 +39,41 @@ namespace Business.Concrete
         public IDataResult<List<CarListDetailsDto>> CarListDetails()
         {
             var results = _carDal.CarListDetailsDtos();
-            if (results.Data==null)
+            if (results==null)
             {
-                return new ErrorDataResult<List<CarListDetailsDto>>(Messages.CarNotFound);
+                return new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>(), Messages.CarNotFound);
             }
-            return new SuccessDataResult<List<CarListDetailsDto>>(results.Data);
+            return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }
 
         [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> CarListColorIdDetails(int colorId)
         {
-            var results = _carDal.CarListColorIdDetailsDtos(colorId);
+            var results = _carDal.CarListDetailsDtos(c=>c.ColorId==colorId);
             if (results.Count==0)
             {
-                return  new ErrorDataResult<List<CarListDetailsDto>>(Messages.CarNotFound);
+                return  new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>(), Messages.CarNotFound);
             }
             return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }
         [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> CarListBrandIdDetails(int brandId)
         {
-            var results = _carDal.CarListBarndIdDetailsDtos(brandId);
+            var results = _carDal.CarListDetailsDtos(c=>c.BrandId==brandId);
+           
             if (results.Count == 0)
             {
-                return new ErrorDataResult<List<CarListDetailsDto>>(Messages.CarNotFound);
+                return new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>(),Messages.CarNotFound);
             }
             return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }
 
         public IDataResult<List<CarListDetailsDto>> CarListColorIdBrandIdDetails(int colorId, int brandId)
         {
-            var results = _carDal.CarListColorIdBrandIdDetailsDtos(colorId, brandId);
+            var results = _carDal.CarListDetailsDtos(c=>c.ColorId==colorId && c.BrandId==brandId);
             if (results.Count==0)
             {
-                return  new ErrorDataResult<List<CarListDetailsDto>>();
+                return  new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>());
             }
             return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }

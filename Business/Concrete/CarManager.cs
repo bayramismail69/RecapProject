@@ -160,10 +160,6 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        public IDataResult<CarImage> GetCarImagePathById(int carId)
-        {
-            var result = _carDal.CarImagePathCarId(carId);
-            return new SuccessDataResult<CarImage>(result);
-        }
+     
     }
 }

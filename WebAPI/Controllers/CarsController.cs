@@ -68,12 +68,7 @@ namespace WebAPI.Controllers
             var results = _carImageService.GetCarDtoIamgeList(carList.Data);
             return Ok(results);
         }
-        [HttpGet("getCarImagePatById")]
-        public IActionResult GetCarImagePatById(int carId)
-        {
-            var results = _carService.GetCarImagePathById(carId);
-            return Ok(results);
-        }
+       
         [HttpGet("getiddetail")]
         public IActionResult GetIdDetail(Car _car)
         {

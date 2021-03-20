@@ -25,21 +25,16 @@ namespace WebAPI.Controllers
             _carImageService = carImageService;
         }
 
-        public IFormFile FromFile { get; private set; }
+       
 
-        [HttpGet("gel")]
-        public IActionResult Gel()
+      
+        [HttpGet("getCarImagesByCarId")]
+        public IActionResult GetCarImagesByCarId(int carId)
         {
-            var results = _carImageService.GetAll();
+            var results = _carImageService.GetByCarId(carId);
             return Ok(results);
         }
-        //[HttpPost("all")]
-        //public IActionResult All([FromForm] IFormFile file)
-        //{
-        //    var path = _environment.WebRootPath + "/Images/";
-        //    var result = _file.Upload(file, path, "Image");
-        //    return Ok(result);
-        //}
+     
         [HttpPost("postall")]
         public IActionResult PostAll([FromForm] IFormFile file,[FromForm] CarImage carImage)
         {

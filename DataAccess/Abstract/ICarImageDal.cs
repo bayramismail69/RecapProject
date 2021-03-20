@@ -11,6 +11,6 @@ namespace DataAccess.Abstract
 {
    public interface ICarImageDal:IEntityRepository<CarImage>
     {
-     
+        CarImage GetImageMin(int carId);
     }
 }

@@ -46,6 +46,16 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }
 
+        public IDataResult<List<CarListDetailsDto>> CarListCarIdDetails(int carId)
+        {
+            var results = _carDal.CarListDetailsDtos(p=>p.Id==carId);
+            if (results == null)
+            {
+                return new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>(), Messages.CarNotFound);
+            }
+            return new SuccessDataResult<List<CarListDetailsDto>>(results);
+        }
+
         [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> CarListColorIdDetails(int colorId)
         {

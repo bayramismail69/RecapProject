@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -134,6 +136,7 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<List<CarImage>>(results);
         }
+       // [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> GetCarDtoIamgeList(List<CarListDetailsDto> carListDetailsDtos)
         {
             carlistDtos.Clear();
@@ -143,14 +146,12 @@ namespace Business.Concrete
                 foreach (var item in carListDetailsDtos)
                 {
                     carListDetailsDto = item;
-                    var resultImage =_carImageDal.GetAll(p=>p.CarId== item.CarId);
-                    if (resultImage.Count!=0)
+                    var resultImage = _carImageDal.GetImageMin(item.CarId);
+                    if (resultImage!=null)
                     {
-                        foreach (var item2 in resultImage)
-                        {
-                            carListDetailsDto.ImagePath = item2.ImagePath;
-                            break;
-                        }
+                      
+                            carListDetailsDto.ImagePath = resultImage.ImagePath;
+                       
                     }
                     else
                     {

@@ -20,10 +20,11 @@ namespace Business.Concrete
     public class CarManager : ICarService
     {
         private ICarDal _carDal;
-
-        public CarManager(ICarDal carDal)
+        private ICarFindexService _carFindexService;
+        public CarManager(ICarDal carDal, ICarFindexService carFindexService)
         {
             _carDal = carDal;
+            _carFindexService = carFindexService;
         }
         [CacheAspect]
         public IDataResult<List<Car>> GetAll()
@@ -35,10 +36,10 @@ namespace Business.Concrete
             }
             return new ErrorDataResult<List<Car>>(Messages.ThereAreNoCarsRegisteredInTheSystem);
         }
-        [CacheAspect]
+        //[CacheAspect]
         public IDataResult<List<CarListDetailsDto>> CarListDetails()
         {
-            var results = _carDal.CarListDetailsDtos();
+            var results = _carDal.CarDetailDtos();
             if (results==null)
             {
                 return new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>(), Messages.CarNotFound);
@@ -48,7 +49,7 @@ namespace Business.Concrete
 
         public IDataResult<List<CarListDetailsDto>> CarListCarIdDetails(int carId)
         {
-            var results = _carDal.CarListDetailsDtos(p=>p.Id==carId);
+            var results = _carDal.CarDetailDtos(p=>p.Id==carId);
             if (results == null)
             {
                 return new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>(), Messages.CarNotFound);
@@ -59,7 +60,7 @@ namespace Business.Concrete
         [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> CarListColorIdDetails(int colorId)
         {
-            var results = _carDal.CarListDetailsDtos(c=>c.ColorId==colorId);
+            var results = _carDal.CarDetailDtos(c=>c.ColorId==colorId);
             if (results.Count==0)
             {
                 return  new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>(), Messages.CarNotFound);
@@ -67,9 +68,19 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CarListDetailsDto>>(results);
         }
         [CacheAspect]
+        public IDataResult<CarListDetailsDto> carDetailByCarId(int carId)
+        {
+            var results = _carDal.CarDetailDto(c => c.Id == carId);
+            if (results == null)
+            {
+                return new ErrorDataResult<CarListDetailsDto>(new CarListDetailsDto(), Messages.CarNotFound);
+            }
+            return new SuccessDataResult<CarListDetailsDto>(results);
+        }
+        [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> CarListBrandIdDetails(int brandId)
         {
-            var results = _carDal.CarListDetailsDtos(c=>c.BrandId==brandId);
+            var results = _carDal.CarDetailDtos(c=>c.BrandId==brandId);
            
             if (results.Count == 0)
             {
@@ -80,7 +91,9 @@ namespace Business.Concrete
 
         public IDataResult<List<CarListDetailsDto>> CarListColorIdBrandIdDetails(int colorId, int brandId)
         {
-            var results = _carDal.CarListDetailsDtos(c=>c.ColorId==colorId && c.BrandId==brandId);
+         //   var result5s = _carDal.CarListDetailsDtos(c => c.CarName.Contains("A") && c.BrandId == brandId);
+        
+            var results = _carDal.CarDetailDtos(c=>c.ColorId==colorId && c.BrandId==brandId);
             if (results.Count==0)
             {
                 return  new ErrorDataResult<List<CarListDetailsDto>>(new List<CarListDetailsDto>());
@@ -97,22 +110,37 @@ namespace Business.Concrete
             }
             return new ErrorDataResult<Car>(Messages.CarNotFound);
         }
-        [SecuredOperation("product.add,admin")]
+        [SecuredOperation("car.add,admin")]
         [ValidationAspect(typeof(CarValidator))]
+        [CacheRemoveAspect("ICarService.Get")]
         public IResult Add(Car car)
         {
+            var gcarControl = GCarControl(car);
             IResult result = BusinessRules.Run(CheckIfTheModelYearIsSuitable(car.ModelYear));
-
+           
             if (result != null)
             {
                 return result;
             }
 
-            _carDal.Add(car);
+            if (gcarControl.Data==null)
+            {
+                _carDal.Add(car);
+                gcarControl = GCarControl(car);
+                if (gcarControl.Data!=null)
+                {
+                    _carFindexService.DefaultCarFindexAdd(gcarControl.Data.Id);
+                    return new SuccessResult(Messages.CarAdded);
+                }
 
-            return new SuccessResult(Messages.CarAdded);
+                return new ErrorResult("arac eklenmedi");
+            }
+
+            return new ErrorResult("Böyle bir araç mevcut");
         }
-
+       
+        [CacheRemoveAspect("ICarService.Get")]
+        [SecuredOperation("car.update,admin")]
         public IResult Update(Car car)
         {
             IResult result = BusinessRules.Run(CarIdCheck(car.Id), CheckIfTheModelYearIsSuitable(car.ModelYear));
@@ -151,6 +179,14 @@ namespace Business.Concrete
             }
             return new SuccessDataResult<Car>();
         }
+
+        private IDataResult<Car> GCarControl(Car car)
+        {
+            var resultCarControl = _carDal.Get(c =>
+                c.ColorId == car.ColorId && c.BrandId == car.BrandId && c.CarName == car.CarName &&
+                c.ModelYear == car.ModelYear);
+            return  new SuccessDataResult<Car>(resultCarControl);
+        }
         private IResult CarIdCheck(int carId)
         {
             if (carId <= 0)
@@ -160,9 +196,9 @@ namespace Business.Concrete
 
             return new SuccessResult();
         }
-        private IResult CheckIfTheModelYearIsSuitable(string modelYear)
+        private IResult CheckIfTheModelYearIsSuitable(int modelYear)
         {
-            if (modelYear.Length < 4)
+            if (modelYear.ToString().Length < 4)
             {
                 return new ErrorResult(Messages.CheckTheModelYearOfTheCar);
             }

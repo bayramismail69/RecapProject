@@ -42,7 +42,7 @@ namespace Business.Concrete
             return new ErrorDataResult<Brand>(Messages.BrandNotFound);
         }
 
-        [SecuredOperation("product.add,admin")]
+        [SecuredOperation("brand.add,admin")]
         [ValidationAspect(typeof(BrandValidator))]
         public IResult Add(Brand brand)
         {
@@ -57,7 +57,7 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.BrandAdded);
         }
-        [SecuredOperation("product.add,admin")]
+        [SecuredOperation("brand.add,admin")]
         [ValidationAspect(typeof(BrandValidator))]
         public IResult Update(Brand brand)
         {
@@ -72,7 +72,7 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.BrandUpdated);
         }
-        [SecuredOperation("product.add,admin")]
+        [SecuredOperation("brand.add,admin")]
         public IResult Delete(int brandId)
         {
             var getBrand = DatabaseBrandCheck(brandId);

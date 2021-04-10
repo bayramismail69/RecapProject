@@ -5,6 +5,7 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.JWT;
+using Entities.Concrete;
 using Entities.DTOs;
 
 namespace Business.Concrete
@@ -13,11 +14,13 @@ namespace Business.Concrete
     {
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
+        private IUserFindexService _userFindexService;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper)
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IUserFindexService userFindexService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
+            _userFindexService = userFindexService;
         }
         [ValidationAspect(typeof(UserValidator))]
         public IDataResult<User> Register(UserForRegisterDto userForRegisterDto, string password)
@@ -34,7 +37,13 @@ namespace Business.Concrete
                 Status = true
             };
             _userService.Add(user);
-            return new SuccessDataResult<User>(user, "Kayıt oldu");
+            var userMail = UserMail(userForRegisterDto.Email);
+            if (userMail.Success)
+            {
+                _userFindexService.Add(new UserFindex { UserId = userMail.Data.Id,FindexNot = 1000});
+                return new SuccessDataResult<User>(user, "Kayıt oldu");
+            }
+            return new ErrorDataResult<User>("kayıt basarısız");
         }
 
         public IDataResult<User> Login(UserForLoginDto userForLoginDto)
@@ -60,6 +69,15 @@ namespace Business.Concrete
                 return new ErrorResult("Kullanıcı mevcut");
             }
             return new SuccessResult();
+        }
+        public IDataResult<User> UserMail(string email)
+        {
+            var user = _userService.GetByMail(email);
+            if (user != null)
+            {
+                return new SuccessDataResult<User>(user);
+            }
+            return new ErrorDataResult<User>("Kullanıcı bulunamadı");
         }
 
         public IDataResult<AccessToken> CreateAccessToken(User user)

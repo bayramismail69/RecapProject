@@ -14,17 +14,19 @@ namespace DataAccess.Concrete.EntityFramework
             using (RecapContext recapContext=new RecapContext())
             {
                 var results = from rental in recapContext.Rentals
-                    join car in recapContext.Cars on rental.CarId equals car.Id
-                    join brand in recapContext.Brands on car.BrandId equals brand.Id
-                    join customer in recapContext.Customers on rental.CustomerId equals customer.Id
-                    join user in recapContext.Users on customer.UserId equals user.Id
-                    select new RentalDetailListDto
-                    {
-                        RentalId =rental.Id,
-                        CarName = car.CarName,
-                        BrandName = brand.BrandName,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName
+                              join car in recapContext.Cars on rental.CarId equals car.Id
+                              join brand in recapContext.Brands on car.BrandId equals brand.Id
+                              join customer in recapContext.Customers on rental.CustomerId equals customer.Id
+                              join user in recapContext.Users on customer.UserId equals user.Id
+                              select new RentalDetailListDto
+                              {
+                                  RentalId = rental.Id,
+                                  CarName = car.CarName,
+                                  BrandName = brand.BrandName,
+                                  FirstName = user.FirstName,
+                                  LastName = user.LastName,
+                                  RentDate = rental.RentDate,
+                                  ReturnDate = rental.ReturnDate
                     };
                 return results.ToList();
             }

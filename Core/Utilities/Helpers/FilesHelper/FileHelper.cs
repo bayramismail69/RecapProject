@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -48,15 +49,20 @@ namespace Core.Utilities.Helpers.FilesHelper
         {
             if (FileType.ToUpper()=="IMAGE")
             {
-                string[] extensions = { "Images",".jpg", ".tif",".png", ".jpeg", ".bmp" };
+                string[] extensions = { "Images",".jpg", ".tif",".png", ".jpeg", ".bmp","IMG" };
                 return new SuccessDataResult<string[]>(extensions) ;
+            }
+            else if (FileType.ToUpper() == "TEXT")
+            {
+                string[] extensions = { "Texts", ".txt" };
+                return new SuccessDataResult<string[]>(extensions);
             }
             return new ErrorDataResult<string[]>();
         }
 
         public IDataResult<string> FileControl(IFormFile file, string[] fileExtentions)
         {
-            var getFileExtensions = Path.GetExtension(file.FileName).ToLower();
+            var getFileExtensions = Path.GetExtension(file.FileName).ToLower(new CultureInfo("en-US", false));
             for (int i = 1; i < fileExtentions.Length; i++)
             {
                 if (fileExtentions[i].ToLower() == getFileExtensions)

@@ -20,8 +20,7 @@ namespace Business.Concrete
     {
         private ICarImageDal _carImageDal;
         private ICarService _carService;
-        List<CarListDetailsDto> carlistDtos = new List<CarListDetailsDto>();
-        CarListDetailsDto carListDetailsDto = new CarListDetailsDto();
+     
         public CarImageManager(ICarImageDal carImageDal, ICarService carService)
         {
             _carImageDal = carImageDal;
@@ -44,15 +43,7 @@ namespace Business.Concrete
             return new ErrorDataResult<List<CarImageDto>>(Messages.CarPhotosNotFound);
         }
 
-        public IDataResult<List<CarImage>> GetById(int carImageId)
-        {
-            var results = _carImageDal.GetAll(c=>c.CarId==carImageId);
-            if (results.Count != 0)
-            {
-                return new SuccessDataResult<List<CarImage>>(results);
-            }
-            return new ErrorDataResult<List<CarImage>>(Messages.PhotosOfTheCarNotFound);
-        }
+     
         //[SecuredOperation("product.add,admin")]
         //[ValidationAspect(typeof(CarImageValidator))]
         public IResult Add(CarImage carImage)
@@ -127,43 +118,46 @@ namespace Business.Concrete
             return new SuccessDataResult<CarImage>();
         }
 
-        public IDataResult<List<CarImage>> GetByCarId(int carId)
-        {
-            var results = _carImageDal.GetAll(p=>p.CarId==carId);
-            if (results.Count==0)
-            {
-                return new ErrorDataResult<List<CarImage>>(Messages.CarImageNotFound);
-            }
-            return new SuccessDataResult<List<CarImage>>(results);
-        }
+      
        // [CacheAspect]
         public IDataResult<List<CarListDetailsDto>> GetCarDtoIamgeList(List<CarListDetailsDto> carListDetailsDtos)
         {
-            carlistDtos.Clear();
+         
 
-            if (carListDetailsDtos.Count!=0)
-            {
-                foreach (var item in carListDetailsDtos)
-                {
-                    carListDetailsDto = item;
-                    var resultImage = _carImageDal.GetImageMin(item.CarId);
-                    if (resultImage!=null)
-                    {
+            //if (carListDetailsDtos.Count!=0)
+            //{
+            //    foreach (var item in carListDetailsDtos)
+            //    {
+            //        carListDetailsDto = item;
+            //        var resultImage = _carImageDal.GetImageMin(item.CarId);
+            //        if (resultImage!=null)
+            //        {
                       
-                            carListDetailsDto.ImagePath = resultImage.ImagePath;
+            //                carListDetailsDto.ImagePath = resultImage.ImagePath;
                        
-                    }
-                    else
-                    {
+            //        }
+            //        else
+            //        {
 
-                        carListDetailsDto.ImagePath = "/Images/default.png";
+            //            carListDetailsDto.ImagePath = "/Images/default.png";
 
 
-                    }
-                    carlistDtos.Add(carListDetailsDto);
-                }
+            //        }
+            //        carlistDtos.Add(carListDetailsDto);
+            //    }
+            //}
+            return new SuccessDataResult<List<CarListDetailsDto>>();
+        }
+
+        public IDataResult<List<CarImage>> GetByCarId(int carId)
+        {
+            var results = _carImageDal.GetAll(c => c.CarId == carId);
+            if (results.Count != 0)
+            {
+                return new SuccessDataResult<List<CarImage>>(results);
             }
-            return new SuccessDataResult<List<CarListDetailsDto>>(carlistDtos);
+
+            return new ErrorDataResult<List<CarImage>>(Messages.PhotosOfTheCarNotFound);
         }
     }
 }

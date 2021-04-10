@@ -20,7 +20,7 @@ namespace Business.DependencyResolvers.Autofac
     {
         protected override void Load(ContainerBuilder builder)
         {
-
+            
             
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
@@ -31,7 +31,7 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<CarManager>().As<ICarService>();
             builder.RegisterType<EfCarDal>().As<ICarDal>();
 
-            builder.RegisterType<BrandManager>().As<IBrandService>();
+            builder.RegisterType<BrandManager>().As<IBrandService>();//refe
             builder.RegisterType<EfBrandDal>().As<IBrandDal>();
 
             builder.RegisterType<CarImageManager>().As<ICarImageService>();
@@ -45,6 +45,18 @@ namespace Business.DependencyResolvers.Autofac
 
             builder.RegisterType<CustomerManager>().As<ICustomerService>();
             builder.RegisterType<EfCustomerDal>().As<ICustomerDal>();
+
+            builder.RegisterType<BankManager>().As<IBankService>();
+            builder.RegisterType<EfBankDal>().As<IBankDal>();
+
+            builder.RegisterType<CarFindexManager>().As<ICarFindexService>();
+            builder.RegisterType<EfCarFindexDal>().As<ICarFindexDal>();
+
+            builder.RegisterType<UserFindexManager>().As<IUserFindexService>();
+            builder.RegisterType<EfUserFindexDal>().As<IUserFindexDal>();
+
+            builder.RegisterType<UserBankCardSaveManager>().As<IUserBankCardSaveService>();
+            builder.RegisterType<EfUserBankCardSaveDal>().As<IUserBankCardSaveDal>();
 
             builder.RegisterType<FileHelper>().As<IFileHelper>();
            // builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>();

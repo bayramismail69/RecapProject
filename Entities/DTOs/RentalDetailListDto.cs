@@ -14,6 +14,7 @@ namespace Entities.DTOs
         public string BrandName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        
+        public DateTime RentDate { get; set; }
+        public DateTime ReturnDate { get; set; }
     }
 }
